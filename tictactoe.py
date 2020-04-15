@@ -1,7 +1,7 @@
+import numpy as np
 board=[[' ',' ',' '],
        [' ',' ',' '],
        [' ',' ',' ']]
-
 point = [[['a', 0], ['b', 0], ['c', 0]],
          [['d', 0], ['e', 0], ['f', 0]],
          [['g', 0], ['h', 0], ['i', 0]]]
@@ -147,9 +147,27 @@ def sort(p):
                         p[x][y] = temp
     return p
 
+def random(k):
+    t = []
+    z = []
+    for i in range(3):
+        for j in range(3):
+            t.append(k[i][j])
+    for i in range(8):
+        if t[i][1] == t[i + 1][1]:
+            z.append(t[i])
+        else:
+            z.append(t[i])
+            break;
+    print(z)
+    r = len(z)
+    print(r)
+    q = np.random.choice(r)
+    return z[q]
+
 def fin(p,q,b):
-    if q[0][0][1]>=p[0][0][1]:
-        n=q[0][0][0]
+    if q[1]>=p[1]:
+        n=q[0]
     else:
         n = p[0][0][0]
     if n=='a' and b[0][0] ==' ':
@@ -184,11 +202,13 @@ def comp(boa):
         for y in range(3):
             point[x][y][1]= check(boa,x,y)      #X
             points[x][y][1] = check1(boa, x, y) #O
-    print(point)
-    print(points)
+    #print(point)
+    #print(points)
     sort(point)
     sort(points)
-    fin(point,points,boa)
+    d=random(point)
+    e=random(points)
+    fin(d,e,boa)
 
 def main():
     while not (board_full(board)):
