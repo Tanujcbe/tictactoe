@@ -1,229 +1,241 @@
-import numpy as np
-board=[[' ',' ',' '],
-       [' ',' ',' '],
-       [' ',' ',' ']]
-point = [[['a', 0], ['b', 0], ['c', 0]],
-         [['d', 0], ['e', 0], ['f', 0]],
-         [['g', 0], ['h', 0], ['i', 0]]]
+class Board:
+    def __init__(self, row, col, target):
+        self.row = row
+        self.col = col
+        self.target = target
+        self.board = []
+        self.initialize_board()
+        self.number_of_remaining_moves = row * col
 
-points = [[['a', 0], ['b', 0], ['c', 0]],
-         [['d', 0], ['e', 0], ['f', 0]],
-         [['g', 0], ['h', 0], ['i', 0]]]
+    def initialize_board(self):
+        for r in range(self.row):
+            self.board.append([])
+            for c in range(self.col):
+                self.board[r].append(' ')
 
-def table():
-    print('--------')
-    print('' + board[0][0], '|' + board[0][1], '|' + board[0][2])
-    print('--------')
-    print('' + board[1][0], '|' + board[1][1], '|' + board[1][2])
-    print('--------')
-    print('' + board[2][0], '|' + board[2][1], '|' + board[2][2])
-    print('--------')
+    def is_board_full(self):
+        return self.number_of_remaining_moves == 0
 
-def board_full(board):
-    fu=0
-    for i in range(3):
-        for j in range(3):
-            if  board[i][j]==' ':
-                fu+=1
-    if fu>0:
-        return False
-    else:
-        return True
-
-def win(bo,le):
-    if ((bo[0][0] == le and bo[0][1] ==le and bo[0][2] == le ) or
-        (bo[1][0] == le and bo[1][1] ==le and bo[1][2] == le ) or
-        (bo[2][0] == le and bo[2][1] ==le and bo[2][2] == le ) or
-        (bo[0][0] == le and bo[1][0] ==le and bo[2][0] == le ) or
-        (bo[0][1] == le and bo[1][1] ==le and bo[2][1] == le ) or
-        (bo[0][2] == le and bo[1][2] ==le and bo[2][2] == le ) or
-        (bo[0][0] == le and bo[1][1] ==le and bo[2][2] == le ) or
-        (bo[0][2] == le and bo[1][1] ==le and bo[2][0] == le)):
-         return True
-    else:
-        return False
-
-def user(boa):
-    run=True
-    while run:
-        u = input('Enter b/w 1-9 : ')
-        try:
-            u = int(u)
-            u=u-1
-            if u >= 0 and u < 9:
-                x=int(u / 3)
-                y=int(u % 3)
-                if (boa[x][y] == ' '):
-                    boa[x][y] = 'X'
-                    run = False
-
+    def print_table(self):
+        print('-' * (4 * (self.col - 1) + 3))
+        for r in range(self.row):
+            print(' ', end="")
+            for c in range(self.col):
+                print(str(self.board[r][c]) + ' ', end="")
+                if c == self.col - 1:
+                    print(' ')
                 else:
-                    print('Already Entered')
-        except:
-           print("Enter a number")
-    table()
+                    print('| ', end="")
+            print('-' * (4 * (self.col - 1) + 3))
 
-def check1(boa,x,y):
-    a=0
-    b=0
-    c=0
-    d=0
-    e=0
-    for i in range(3):
-        for j in range(3):
-            if not boa[x][y]==' ':
-                return -1
-            elif x==i and not y==j:
-                if boa[i][j]=='O':
-                    b+=1
-                    if b == 2:
-                        a = 90
-                        return a
-            elif y==j  and not x==i:
-                if boa[i][j]=='O':
-                    e+=1
-                    if e== 2:
-                        a = 90
-                        return a
-            elif x==y and i==j:
-                if boa[i][j]=='O':
-                    c+=1
-                    if c == 2:
-                        a = 90
-                        return a
-            elif (x==j and y==i) or i+j==2:
-                if boa[i][j]=='O':
-                    d+=1
-                    if d == 2:
-                        a = 90
-                        return a
-    return(b+c+d+e)
+    def is_winning(self, r, c, marker):
+        return self.check_column(r, c, marker) or self.check_row(r, c, marker) \
+               or self.check_main_diagonal(r, c, marker) or self.check_secondary_diagonal(r, c, marker)
 
-def check(boa,x,y):
-    a=0
-    b=0
-    c=0
-    d=0
-    e=0
-    for i in range(3):
-        for j in range(3):
-            #print(i,j)
-            if not boa[x][y]==' ':
-                return -1
-            elif x==i and not y==j:
-                if boa[i][j]=='X':
-                    b+=1
-                    if b == 2:
-                        a = 90
-                        return a
-            elif y==j  and not x==i:
-                if boa[i][j]=='X':
-                    e+=1
-                    if e== 2:
-                        a = 90
-                        return a
-            elif x==y and i==j:
-                if boa[i][j]=='X':
-                    c+=1
-                    if c == 2:
-                        a = 90
-                        return a
-            elif ((i==0 and j==2) or (i==1 and j==1) or(i==2 and j==0)) and((x==0 and y==2) or (x==1 and y==1) or(x==2 and y==0))  and not i==x and not j==y :
-                if boa[i][j]=='X':
-                    d+=1
-                    if d == 2:
-                        a = 90
-                        return a
-    return(b+c+d+e)
+    def check_column(self, r, c, marker):
+        number_of_marker = 0
 
-def sort(p):
-    for i in range(3):
-        for j in range(3):
-            for x in range(3):
-                for y in range(3):
-                    if p[i][j][1] > p[x][y][1]:
-                        temp = p[i][j]
-                        p[i][j] = p[x][y]
-                        p[x][y] = temp
-    return p
+        cur_row = r
+        while cur_row >= 0 and self.board[cur_row][c] == marker:
+            number_of_marker += 1
+            if number_of_marker == self.target:
+                return True
+            cur_row -= 1
 
-def random(k):
-    t = []
-    z = []
-    for i in range(3):
-        for j in range(3):
-            t.append(k[i][j])
-    for i in range(8):
-        if t[i][1] == t[i + 1][1]:
-            z.append(t[i])
+        cur_row = r + 1
+        while cur_row < self.row and self.board[cur_row][c] == marker:
+            number_of_marker += 1
+            if number_of_marker == self.target:
+                return True
+            cur_row += 1
+
+        return False
+
+    def check_row(self, r, c, marker):
+        number_of_marker = 0
+
+        cur_col = c
+        while cur_col >= 0 and self.board[r][cur_col] == marker:
+            number_of_marker += 1
+            if number_of_marker == self.target:
+                return True
+            cur_col -= 1
+
+        cur_col = c + 1
+        while cur_col < self.col and self.board[r][cur_col] == marker:
+            number_of_marker += 1
+            if number_of_marker == self.target:
+                return True
+            cur_col += 1
+
+        return False
+
+    def check_main_diagonal(self, r, c, marker):
+        number_of_marker = 0
+
+        cur_row = r
+        cur_col = c
+        while cur_row >= 0 and cur_col >= 0 and self.board[cur_row][cur_col] == marker:
+            number_of_marker += 1
+            if number_of_marker == self.target:
+                return True
+            cur_row -= 1
+            cur_col -= 1
+
+        cur_row = r + 1
+        cur_col = c + 1
+        while cur_row < self.row and cur_col < self.col and self.board[cur_row][cur_col] == marker:
+            number_of_marker += 1
+            if number_of_marker == self.target:
+                return True
+            cur_row += 1
+            cur_col += 1
+
+        return False
+
+    def check_secondary_diagonal(self, r, c, marker):
+        number_of_marker = 0
+
+        cur_row = r
+        cur_col = c
+        while cur_row >= 0 and cur_col < self.col and self.board[cur_row][cur_col] == marker:
+            number_of_marker += 1
+            if number_of_marker == self.target:
+                return True
+            cur_row -= 1
+            cur_col += 1
+
+        cur_row = r + 1
+        cur_col = c - 1
+        while cur_row < self.row and cur_col >= 0 and self.board[cur_row][cur_col] == marker:
+            number_of_marker += 1
+            if number_of_marker == self.target:
+                return True
+            cur_row += 1
+            cur_col -= 1
+
+        return False
+
+
+class Player:
+    def __init__(self, marker, board):
+        self.marker = marker
+        self.board = board
+        self.last_row = -1
+        self.last_col = -1
+        print("player " + marker + " created")
+
+    def put_marker(self, row, col):
+        if self.board.board[row][col] == ' ':
+            self.board.board[row][col] = self.marker
+            self.last_row = row
+            self.last_col = col
+            return True
         else:
-            z.append(t[i])
-            break;
-    print(z)
-    r = len(z)
-    print(r)
-    q = np.random.choice(r)
-    return z[q]
+            return False
 
-def fin(p,q,b):
-    if q[1]>=p[1]:
-        n=q[0]
-    else:
-        n = p[0][0][0]
-    if n=='a' and b[0][0] ==' ':
-        b[0][0]='O'
-    elif n=='b' and b[0][1] ==' ':
-        b[0][1]='O'
-    elif n=='c' and b[0][2] ==' ':
-        b[0][2]='O'
-    elif n=='d' and b[1][0] ==' ':
-        b[1][0]='O'
-    elif n=='e' and b[1][1] ==' ':
-        b[1][1]='O'
-    elif n=='f' and b[1][2] ==' ':
-        b[1][2]='O'
-    elif n=='g' and b[2][0]==' ':
-        b[2][0]='O'
-    elif n=='h' and b[2][1]==' ':
-        b[2][1]='O'
-    elif n=='i' and b[2][2]==' ':
-        b[2][2]='O'
-    print(n)
-    table()
+    def decrease_remaining_moves(self):
+        self.board.number_of_remaining_moves -= 1
 
-def comp(boa):
-    point = [[['a', 0], ['b', 0], ['c', 0]],
-           [['d', 0], ['e', 0], ['f', 0]],
-           [['g', 0], ['h', 0], ['i', 0]]]
-    points = [[['a', 0], ['b', 0], ['c', 0]],
-           [['d', 0], ['e', 0], ['f', 0]],
-           [['g', 0], ['h', 0], ['i', 0]]]
-    for x in range(3):
-        for y in range(3):
-            point[x][y][1]= check(boa,x,y)      #X
-            points[x][y][1] = check1(boa, x, y) #O
-    #print(point)
-    #print(points)
-    sort(point)
-    sort(points)
-    d=random(point)
-    e=random(points)
-    fin(d,e,boa)
+    def has_won(self):
+        return self.board.is_winning(self.last_row, self.last_col, self.marker)
 
-def main():
-    while not (board_full(board)):
-        if not (win(board,'X')) :
-            user(board)
-        if (win(board, 'X')):
-            print('You won the match')
-            exit()
-        if not (win(board, 'O')) :
-            comp(board)
-        if (win(board, 'O')):
-            print('You lost the match')
-            exit()
-    if board_full(board):
-        print('Tie')
-        exit()
+    def print_winner(self):
+        print('Winner is the player with the marker ' + self.marker)
 
-main()
+    def move(self):
+        pass
+
+
+class Human_Player(Player):
+    def move(self):
+        run = True
+        while run:
+            try:
+                user_input = input('Enter b/w 1-' + str(self.board.row * self.board.col) + ' : ')
+
+                user_input = int(user_input) - 1
+                if 0 <= user_input < self.board.row * self.board.col:
+                    row = int(user_input / self.board.row)
+                    col = int(user_input % self.board.col)
+
+                    if self.put_marker(row, col):
+                        self.decrease_remaining_moves()
+                        run = False
+                    else:
+                        print('Already entered')
+                else:
+                    print('Please enter a valid number')
+            except:
+                print('Enter a number')
+        self.board.print_table()
+
+
+class AI_Player(Player):
+
+    def __init__(self, marker, board):
+        super().__init__(marker, board)
+        self.available_slots = list(range(board.row * board.col))
+        self.available_pointer = 0
+
+    def move(self):
+
+        index = self.find_slot()
+        loc = self.available_slots[index]
+
+        row = int(loc / self.board.row)
+        col = int(loc % self.board.col)
+
+        if self.put_marker(row, col):
+            self.decrease_remaining_moves()
+            self.swap(index)
+        else:
+            self.swap(index)
+            self.move()
+        self.board.print_table()
+
+    def find_slot(self):
+        from random import randrange
+        return randrange(self.available_pointer, len(self.available_slots))
+
+    def swap(self, cur_index):
+        temp = self.available_slots[cur_index]
+        self.available_slots[cur_index] = self.available_slots[self.available_pointer]
+        self.available_slots[self.available_pointer] = temp
+        self.available_pointer += 1
+
+
+class TicTacToe:
+    def __init__(self, row, col, target):
+        self.board = Board(row, col, target)
+        self.first_player = Human_Player('X', self.board)
+        self.second_player = AI_Player('O', self.board)
+
+    def start(self):
+        self.board.print_table()
+
+        while True:
+
+            if not self.board.is_board_full():
+                self.first_player.move()
+            else:
+                print("Stalemate")
+                break
+
+            if self.first_player.has_won():
+                self.first_player.print_winner()
+                break
+
+            if not self.board.is_board_full():
+                self.second_player.move()
+            else:
+                print("Stalemate")
+                break
+
+            if self.second_player.has_won():
+                self.second_player.print_winner()
+                break
+
+if __name__ == "__main__":
+    game = TicTacToe(5, 5, 4)
+    game.start()
