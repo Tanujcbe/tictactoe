@@ -126,6 +126,7 @@ class Player:
         print("player " + marker + " created")
 
     def put_marker(self, row, col):
+        print(row, col)
         if self.board.board[row][col] == ' ':
             self.board.board[row][col] = self.marker
             self.last_row = row
@@ -156,7 +157,7 @@ class Human_Player(Player):
 
                 user_input = int(user_input) - 1
                 if 0 <= user_input < self.board.row * self.board.col:
-                    row = int(user_input / self.board.row)
+                    row = int(user_input / self.board.col)
                     col = int(user_input % self.board.col)
 
                     if self.put_marker(row, col):
@@ -183,7 +184,7 @@ class AI_Player(Player):
         index = self.find_slot()
         loc = self.available_slots[index]
 
-        row = int(loc / self.board.row)
+        row = int(loc / self.board.col)
         col = int(loc % self.board.col)
 
         if self.put_marker(row, col):
@@ -236,6 +237,27 @@ class TicTacToe:
                 self.second_player.print_winner()
                 break
 
+
 if __name__ == "__main__":
-    game = TicTacToe(5, 5, 4)
+    game_mode = input('Would you like to play traditional TicTacToe game: ')
+    while game_mode != 'yes' and game_mode != 'no':
+        game_mode = input('Please enter "yes" or "no": ')
+    game = None
+    if game_mode == 'yes':
+        game = TicTacToe(3, 3, 3)
+    else:
+        row = input('Please enter number of rows: ')
+        row = int(row)
+        col = input('Please enter number of columns: ')
+        col = int(col)
+        target = input(
+            'Please enter number of consecutive markers to win(This can\'t be greater than rows and cols): ')
+        target = int(target)
+        while target > col or target > row:
+            target = input(
+                'Please enter a valid number for target: ')
+            target = int(target)
+        game = TicTacToe(row, col, target)
+
+
     game.start()
