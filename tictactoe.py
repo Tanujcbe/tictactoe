@@ -154,7 +154,7 @@ class Board:
             for c in range(col):
                 self.board[r].append(' ')
 
-    def check_empty_cell(self, r, c) -> bool:
+    def check_empty_cell(self, r, c):
         return self.board[r][c] == ' '
 
     def put_marker(self, r, c, marker):
@@ -179,11 +179,11 @@ class BoardPrinter:
 
 
 class WinnerChecker:
-    def __init__(self, target: int):
+    def __init__(self, target):
         self.target = target
 
-    def check(self, board: list, row: int, col: int) -> bool:
-        def count_consecutive_markers(row_inc: int, col_inc: int) -> int:
+    def check(self, board, row, col):
+        def count_consecutive_markers(row_inc, col_inc):
             marker = board[row][col]
             number_of_marker = 0
             cur_row = row
@@ -196,7 +196,7 @@ class WinnerChecker:
 
             return number_of_marker
 
-        def check_direction(row_dir: int, col_dir: int) -> bool:
+        def check_direction(row_dir, col_dir):
             count = count_consecutive_markers(row_dir, col_dir) + count_consecutive_markers(-row_dir, -col_dir) - 1
             return count >= self.target
 
@@ -204,7 +204,7 @@ class WinnerChecker:
 
 
 class RemainingMoveCtr:
-    def __init__(self, num_of_remaining_moves: int):
+    def __init__(self, num_of_remaining_moves):
         self.num_of_remaining_moves = num_of_remaining_moves
 
     def decrease_num_of_remainig_moves(self):
