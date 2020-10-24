@@ -264,6 +264,60 @@ class TicTacToe:
             print("Stalemate")
 
 
+def get_row_from_io():
+    row = -1
+    while row == -1:
+        try:
+            row = input('Please enter number of rows: ')
+        except:
+            print('Please enter a number')
+    return int(row)
+
+
+def get_valid_row_from_io():
+    row = get_row_from_io()
+    while row < 3:
+        print('Row number can\'t be lower than 3')
+        row = get_row_from_io()
+    return row
+
+
+def get_col_from_io():
+    col = -1
+    while col == -1:
+        try:
+            col = input('Please enter number of cols: ')
+        except:
+            print('Please enter a number')
+    return int(col)
+
+
+def get_valid_col_from_io():
+    col = get_col_from_io()
+    while col < 3:
+        print('Col number can\'t be lower than 3')
+        col = get_col_from_io()
+    return col
+
+
+def get_target_from_io():
+    target = -1
+    while target == -1:
+        try:
+            target = input(
+                'Please enter number of consecutive markers to win(This can\'t be greater than rows and cols): ')
+        except:
+            print('Please enter a number')
+    return int(target)
+
+
+def get_valid_target_from_io(row, col):
+    target = get_target_from_io()
+    while target > col or target > row:
+        target = get_target_from_io()
+    return target
+
+
 if __name__ == "__main__":
     game_mode = input('Would you like to play traditional TicTacToe game: ')
     while game_mode != 'yes' and game_mode != 'no':
@@ -272,17 +326,10 @@ if __name__ == "__main__":
     if game_mode == 'yes':
         game = TicTacToe(3, 3, 3)
     else:
-        row = input('Please enter number of rows: ')
-        row = int(row)
-        col = input('Please enter number of columns: ')
-        col = int(col)
-        target = input(
-            'Please enter number of consecutive markers to win(This can\'t be greater than rows and cols): ')
-        target = int(target)
-        while target > col or target > row:
-            target = input(
-                'Please enter a valid number for target: ')
-            target = int(target)
+        row = get_valid_row_from_io()
+        col = get_valid_col_from_io()
+        target = get_valid_target_from_io(row, col)
+
         game = TicTacToe(row, col, target)
 
     game.start()
